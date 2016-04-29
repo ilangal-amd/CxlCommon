@@ -6,10 +6,10 @@ INCLUDE_TREE = {
         'release-x86_64'    : 'Include/'
         }
 LIBRARY_TREE = {
-        'debug-x86'        : 'Bin-Internal/Linx86',
-        'release-x86'      : 'Bin-Internal/Linx86',
-        'debug-x86_64'     : 'Bin-Internal/Linx64',
-        'release-x86_64'   : 'Bin-Internal/Linx64',
+        'debug-x86'        : 'Bin/Linx86',
+        'release-x86'      : 'Bin/Linx86',
+        'debug-x86_64'     : 'Bin/Linx64',
+        'release-x86_64'   : 'Bin/Linx64',
         }
 LIBS = []
 
