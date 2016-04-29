@@ -204,3 +204,8 @@ FakesAssemblies/
 Src/AMDTApplication/tmp/
 Src/AMDTApplicationComponents/tmp/
 
+# Linux build files
+*.os
+*.pyc
+/Src/**/*.so
+/Src/**/*.a
