@@ -323,11 +323,8 @@
 // export thread to csv
 #define AC_STR_ExportThreadToCSVFileName "Thread_%1"
 
-#if AMDT_BUILD_TARGET == AMDT_WINDOWS_OS
-    #define AC_STR_FILE_EXTENSIONS_QREGEXP "\\.cl|hlsl|glsl|fs|frag|vs|vert|cs|comp|gs|geom|ps|hs|ds|tese|tesc"
-#else
-    #define AC_STR_FILE_EXTENSIONS_QREGEXP "\\.cl|hlsl|glsl|fs|frag|vs|vert|cs|comp|gs|geom|tese|tesc"
-#endif
+/// used for syntax highlighting
+#define AC_STR_FILE_EXTENSIONS_QREGEXP "\\.cpp|hpp|cl|cxlil|cxlisa|vs|hs|ps|gs|ds|cs|hlsl|c|h|css|vert|tesc|tese|frag|comp|geom|glsl|fs|java|htm|xml|gdb|gdbvs|bpt"
 
 // units
 #define AC_STR_UnitsMilliseconds "ms"

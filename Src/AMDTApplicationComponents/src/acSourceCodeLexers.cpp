@@ -1231,7 +1231,14 @@ const char* ClBuiltInConstants =
         "uav_umax_ext uav_umin  uav_umin_ext uav_ushort_load uav_ushort_load_ext uav_xor  uav_xor_ext "
         "ubit_extract  ubit_insert ubit_reverse ubit_reverser udiv uge ult umad umad24 umax "
         "umax3 umed3 umin umin3 umod umul umul_high umul24 umul24_high unpack0 "
-        "unpack1 unpack2 unpack3 ushr utod utof vmad_i64_i32 vmad_u64_u32 wave_id whileloop ";
+        "unpack1 unpack2 unpack3 ushr utod utof vmad_i64_i32 vmad_u64_u32 wave_id whileloop "
+        "dcl_output_generic dcl_typeless_uav_id dcl_lds_id dcl_wavesize lds_store_id  dcl_output_edge_tessfactor "
+        "uav_raw_load_id lds_load_id uav_raw_store_id fence_threads_lds div_zeroop dcl_output_inside_tessfactor "
+        "dcl_input_primitive_point dcl_output_topology_point_list dcl_output_position "
+        "dcl_output_pointsize dcl_output_clipdistance dcl_output_culldistance "
+        "dcl_output_rendertarget_array_index dcl_output_viewport_array_index "
+        "dcl_output_primitiveid dcl_num_ocp3 dcl_max_tessfactor64 dcl_num_icp3 dcl_ts_domain_quad "
+        "dcl_ts_partition_integer dcl_ts_output_primitive_triangle_cw dcl_input_generic cmov_logical ";
 
     const char* IlBuiltInConstants =
         "r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 ";
