@@ -325,6 +325,43 @@ using AMDTProfileSamplingConfigVec = gtVector<AMDTProfileSamplingConfig>;
 using AMDTProfileDataVec = gtVector<AMDTProfileData>;
 using AMDTProfileReportConfigVec = gtVector<AMDTProfileReportConfig>;
 
+
+struct AMDTCallGraphFunction
+{
+    AMDTProfileFunctionInfo m_functionInfo;
+
+    gtString                m_srcFile;
+    gtUInt32                m_srcFileLine = 0;
+    gtVAddr                 m_moduleBaseAddr = 0;
+
+    gtUInt64                m_totalSelfSamples = 0;
+    gtUInt64                m_totalDeepSamples = 0;
+    double                  m_deepSamplesPerc = 0.0;
+
+    gtUInt32                m_pathCount = 0;
+};
+
+using AMDTCallGraphFunctionVec = gtVector<AMDTCallGraphFunction>;
+using AMDTCallGraphPath = gtVector<AMDTCallGraphFunction>;
+
+//
+//  !!! This is an internal structure !!!
+//
+struct CallstackFrame
+{
+    gtUInt32                m_callstackId;
+
+    AMDTProfileFunctionInfo m_funcInfo;
+    gtUInt32                m_depth;
+    bool                    m_isLeaf = false;
+    gtVAddr                 m_moduleBaseAddr;
+
+    gtUInt32                m_counterId;
+    gtUInt32                m_selfSamples = 0;      // Valid only if m_isLeaf is set
+};
+
+using CallstackFrameVec = gtVector<CallstackFrame>;
+
 //
 //  Temporary structs
 //
