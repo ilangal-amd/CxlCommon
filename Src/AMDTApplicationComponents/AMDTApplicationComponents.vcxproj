@@ -103,6 +103,7 @@
     <ClCompile Include="src\acFindWidget.cpp" />
     <ClCompile Include="src\acFrozenColumnTreeView.cpp" />
     <ClCompile Include="src\acFunctions.cpp" />
+    <ClCompile Include="src\acGoToLineDialog.cpp" />
     <ClCompile Include="src\acGroupedBarsGraph.cpp" />
     <ClCompile Include="src\acHeaderView.cpp" />
     <ClCompile Include="src\acIcons.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acEulaDialog.cpp" />
     <ClCompile Include="tmp\rcc_$(Platform)$(Configuration)\rcc_acIcons.cpp" />
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acThumbnailView.cpp" />
+    <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acGoToLineDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\acFindParameters.h" />
@@ -262,6 +264,12 @@
       <AdditionalInputs>$(AMDTCommonExt)Qt\5.5\bin\moc.exe;src\%(Filename).cpp</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="Include\acFrozenColumnTreeView.h">
+      <Command>$(AMDTCommonExt)Qt\5.5\bin\moc.exe Include\%(Filename).h -o tmp\moc_$(Platform)$(Configuration)\moc_%(Filename).cpp</Command>
+      <Message>moc creation</Message>
+      <Outputs>tmp\moc_$(Platform)$(Configuration)\moc_%(Filename).cpp</Outputs>
+      <AdditionalInputs>$(AMDTCommonExt)Qt\5.5\bin\moc.exe;src\%(Filename).cpp</AdditionalInputs>
+    </CustomBuild>
+    <CustomBuild Include="Include\acGoToLineDialog.h">
       <Command>$(AMDTCommonExt)Qt\5.5\bin\moc.exe Include\%(Filename).h -o tmp\moc_$(Platform)$(Configuration)\moc_%(Filename).cpp</Command>
       <Message>moc creation</Message>
       <Outputs>tmp\moc_$(Platform)$(Configuration)\moc_%(Filename).cpp</Outputs>

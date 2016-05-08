@@ -41,7 +41,7 @@
     <ClCompile Include="src\acDataView.cpp">
       <Filter>src</Filter>
     </ClCompile>
-	<ClCompile Include="src\acThumbnailView.cpp">
+    <ClCompile Include="src\acThumbnailView.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\acDataViewGridTable.cpp">
@@ -65,7 +65,7 @@
     <ClCompile Include="src\acImageManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-	<ClCompile Include="src\acImageView.cpp">
+    <ClCompile Include="src\acImageView.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\acRawDataExporter.cpp">
@@ -167,7 +167,7 @@
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acImageManagerModel.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-	<ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acImageView.cpp">
+    <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acImageView.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acProgressDlg.cpp">
@@ -195,6 +195,9 @@
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acEulaDialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acGoToLineDialog.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="src\acBarsGraph.cpp">
@@ -233,7 +236,7 @@
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acDataView.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-	<ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acThumbnailView.cpp">
+    <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acThumbnailView.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="tmp\moc_$(Platform)$(Configuration)\moc_acDataViewGridTable.cpp">
@@ -362,6 +365,9 @@
     <ClCompile Include="src\acRibbonManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\acGoToLineDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\acApplicationComponentsDLLBuild.h">
@@ -472,6 +478,9 @@
     <ClInclude Include="Include\acObjectNamesConstants.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\acGoToLineDialog.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Include\acSourceCodeView.h">
@@ -498,7 +507,7 @@
     <CustomBuild Include="Include\acDataView.h">
       <Filter>Include</Filter>
     </CustomBuild>
-	<CustomBuild Include="Include\acThumbnailView.h">
+    <CustomBuild Include="Include\acThumbnailView.h">
       <Filter>Include</Filter>
     </CustomBuild>
     <CustomBuild Include="Include\acSplitter.h">
@@ -513,7 +522,7 @@
     <CustomBuild Include="Include\acImageManagerModel.h">
       <Filter>Include</Filter>
     </CustomBuild>
-	<CustomBuild Include="Include\acImageView.h">
+    <CustomBuild Include="Include\acImageView.h">
       <Filter>Include</Filter>
     </CustomBuild>
     <CustomBuild Include="Include\acDoubleSlider.h">

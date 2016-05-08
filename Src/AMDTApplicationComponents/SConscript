@@ -37,7 +37,7 @@ moc_files = Split(
                 + " Include/acHeaderView.h"
                 + " Include/acImageManager.h"
                 + " Include/acImageManagerModel.h"
-				+ " Include/acImageView.h"
+                + " Include/acImageView.h"
                 + " Include/acLineEdit.h"
                 + " Include/acFindWidget.h"
                 + " Include/acSourceCodeView.h"
@@ -59,14 +59,15 @@ moc_files = Split(
                 + " Include/acVectorLineGraph.h"
                 + " Include/acVirtualListCtrl.h"
                 + " Include/acVirtualListCtrlModel.h"
-				+ " Include/acProgressDlg.h"
-				+ " Include/acProgressAnimationWidget.h"
-				+ " Include/acSendErrorReportDialog.h"
-				+ " Include/acSoftwareUpdaterWindow.h"
-				+ " Include/acSoftwareUpdaterProxySetting.h"
-				+ " Include/acThumbnailView.h"
-				+ " Include/acHelpAboutDialog.h"
-				+ " Include/acEulaDialog.h"
+                + " Include/acProgressDlg.h"
+                + " Include/acProgressAnimationWidget.h"
+                + " Include/acSendErrorReportDialog.h"
+                + " Include/acSoftwareUpdaterWindow.h"
+                + " Include/acSoftwareUpdaterProxySetting.h"
+                + " Include/acThumbnailView.h"
+                + " Include/acHelpAboutDialog.h"
+                + " Include/acEulaDialog.h"
+                + " Include/acGoToLineDialog.h"
                 )
 
 qrc_files = [ "Include/res/icons/acIcons.qrc" ]
@@ -96,7 +97,7 @@ sources = \
     "src/acImageItemDelegate.cpp",
     "src/acImageManager.cpp",
     "src/acImageManagerModel.cpp",
-	"src/acImageView.cpp",
+    "src/acImageView.cpp",
     "src/acItemDelegate.cpp",
     "src/acLineEdit.cpp",
     "src/acListCtrl.cpp",
@@ -126,18 +127,18 @@ sources = \
     "src/acTimelineItem.cpp",
     "src/acTimelineItemCurve.cpp",
     "src/acTimelineFiltersDialog.cpp",
-	"src/acThumbnailView.cpp",
+    "src/acThumbnailView.cpp",
     "src/acValidators.cpp",
     "src/acVectorLineGraph.cpp",
     "src/acVirtualListCtrl.cpp",
     "src/acVirtualListCtrlModel.cpp",
-	"src/acProgressDlg.cpp",
-	"src/acProgressAnimationWidget.cpp",
-	"src/acSendErrorReportDialog.cpp",
-	"src/acSoftwareUpdaterWindow.cpp",
-	"src/acSoftwareUpdaterProxySetting.cpp",
-	"src/acHelpAboutDialog.cpp",
-	"src/acEulaDialog.cpp",
+    "src/acProgressDlg.cpp",
+    "src/acProgressAnimationWidget.cpp",
+    "src/acSendErrorReportDialog.cpp",
+    "src/acSoftwareUpdaterWindow.cpp",
+    "src/acSoftwareUpdaterProxySetting.cpp",
+    "src/acHelpAboutDialog.cpp",
+    "src/acEulaDialog.cpp",
 ]
 
 commonLinkedLibraries = \
