@@ -282,7 +282,7 @@ void acThumbnailView::OnItemPressed(QVariant itemId)
 
 void acThumbnailView::SetSelected(int thumbIndex, bool shouldSelect)
 {
-    GT_IF_WITH_ASSERT(m_pGraphicLayout != nullptr)
+    GT_IF_WITH_ASSERT(m_pGraphicLayout != nullptr && m_pGraphicLayout->count() > thumbIndex)
     {
         acThumbLayoutItem* pItem = (acThumbLayoutItem*)(m_pGraphicLayout->itemAt(thumbIndex));
 
