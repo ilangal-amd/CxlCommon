@@ -66,7 +66,7 @@ public:
 
     // Allows us to remember the host name  and port(even if we are NOT in a remote session).
     // To know whether we are in a remote session or not, you should use the isRemoteTarget() function.
-    void SetRemoteTargetHostname(const gtString& remoteHostName);;
+    void SetRemoteTargetHostname(const gtString& remoteHostName);
     void setRemoteTargetDaemonPort(gtUInt16 daemonConnectionPort) {m_remoteTargetDaemonConnectionPort = daemonConnectionPort;};
 
     const gtString& projectName() const { return m_projectName; };

@@ -728,7 +728,7 @@ bool acVectorLineGraph::ConvertIndexToDrawnIndex(int& keyIndex, int& drawnVector
         {
             retVal = true;
             // we need the index of the item, not the value of it:
-            drawnVectorIndex = it - m_drawnIndexes.begin();;
+            drawnVectorIndex = it - m_drawnIndexes.begin();
         }
         else
         {

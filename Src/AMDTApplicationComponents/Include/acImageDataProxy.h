@@ -38,7 +38,7 @@ class AC_API acImageDataProxy
 {
 public:
     // Constructor:
-    acImageDataProxy();;
+    acImageDataProxy();
 
     // Destructor
     virtual ~acImageDataProxy() {};

@@ -87,7 +87,7 @@ public:
     virtual void addToolbar(acToolBar* pToolbar, acToolBar* pBeforeToolbar = NULL, bool frameworkToolbar = false);
 
     // Focus QWidget:
-    virtual QWidget* findFocusedWidget();;
+    virtual QWidget* findFocusedWidget();
     void setFocusedQWidget(QWidget* pFocusedWidget);
     QWidget* focusedQWidget() { return m_pLastFocusedWidget; }
 

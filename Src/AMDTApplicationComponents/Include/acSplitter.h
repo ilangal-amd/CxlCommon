@@ -31,12 +31,12 @@ class AC_API acSplitter : public QSplitter
     Q_OBJECT
 public:
 
-    acSplitter(QWidget* pParent = NULL);;
-    acSplitter(Qt::Orientation orientation, QWidget* pParent = NULL);;
+    acSplitter(QWidget* pParent = NULL);
+    acSplitter(Qt::Orientation orientation, QWidget* pParent = NULL);
     ~acSplitter() {};
 
     /// This function is simply accessing moveSplitter, which is a protected function in QSplitter:
-    void MoveSplitter(int index, int position);;
+    void MoveSplitter(int index, int position);
 
 };
 

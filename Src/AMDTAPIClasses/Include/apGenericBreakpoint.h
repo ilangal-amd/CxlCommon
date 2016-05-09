@@ -60,8 +60,8 @@ class AP_API apGenericBreakpoint : public apBreakPoint
 {
 public:
 
-    apGenericBreakpoint(apGenericBreakpointType breakType);;
-    apGenericBreakpoint();;
+    apGenericBreakpoint(apGenericBreakpointType breakType);
+    apGenericBreakpoint();
     virtual ~apGenericBreakpoint() {};
 
     // Accessors:

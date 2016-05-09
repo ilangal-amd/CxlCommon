@@ -482,7 +482,7 @@ void osDebugLog::addPrintout(const wchar_t* functionName, const wchar_t* fileNam
             printout._printoutString += functionName;
         }
 
-        printout._printoutString += OS_STR_DebugLogDelimiter;;
+        printout._printoutString += OS_STR_DebugLogDelimiter;
         printout._printoutString += fileName;
         printout._printoutString += OS_STR_DebugLogDelimiter;
         printout._printoutString.appendFormattedString(L"%d", lineNumber);

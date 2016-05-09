@@ -67,7 +67,7 @@ public:
 
     // Accessors:
     void setHighlightColor(const QColor& newColor) {_highlightColor = newColor;};
-    void setChartType(const acChartType& chartType);;
+    void setChartType(const acChartType& chartType);
     void setReferenceValue(const acChartDataType& refVal) {_referenceValue = refVal; _areArraysValid = false;};
 
     // Other functions:

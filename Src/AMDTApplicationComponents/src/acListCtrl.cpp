@@ -1389,7 +1389,7 @@ void acListCtrl::onFindPrev()
     // m_isSearchUp flag is up only when find prev button is pressed
     acFindParameters::Instance().m_isSearchUp = true;
     onFindNext();
-    acFindParameters::Instance().m_isSearchUp = false;;
+    acFindParameters::Instance().m_isSearchUp = false;
 }
 
 
