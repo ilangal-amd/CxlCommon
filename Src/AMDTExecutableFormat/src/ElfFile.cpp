@@ -503,26 +503,43 @@ bool ElfFile::InitializeSymbolEngine(const wchar_t* pSearchPath,
                 {
                     fileName[OS_MAX_PATH - 1] = L'\0';
 
-                    wchar_t imagePath[OS_MAX_PATH];
+                    // Some unfortunate .gnu_debuglink points to same executable file instead of pointing
+                    // to an actual debug file, which would lead to file loading again and again.
+                    // Stop such scenarios by comparing the file names.
 
-                    if (0U != SymbolEngine::FindFile(pSearchPath, fileName, imagePath))
+                    // Find the filename in modulepath
+                    int i = wcslen(m_modulePath) - 1;
+
+                    while (i >= 0 && m_modulePath[i] != osFilePath::osPathSeparator)
                     {
-                        ProxySymbolEngine<ElfFile>* pProxyEngine = new ProxySymbolEngine<ElfFile>(imagePath);
+                        --i;
+                    }
 
-                        if (pProxyEngine->Initialize(m_loadAddress))
+                    wchar_t* moduleFileName = &m_modulePath[i + 1];
+
+                    if (0 != wcsncmp(fileName, moduleFileName, OS_MAX_PATH))
+                    {
+                        wchar_t imagePath[OS_MAX_PATH];
+
+                        if (0U != SymbolEngine::FindFile(pSearchPath, fileName, imagePath))
                         {
-                            if (NULL != m_pSymbolEngine)
+                            ProxySymbolEngine<ElfFile>* pProxyEngine = new ProxySymbolEngine<ElfFile>(imagePath);
+
+                            if (pProxyEngine->Initialize(m_loadAddress))
                             {
-                                static_cast<ModularSymbolEngine*>(m_pSymbolEngine)->Splice(*pProxyEngine->GetInternalEngine());
-                                delete m_pSymbolEngine;
-                            }
+                                if (NULL != m_pSymbolEngine)
+                                {
+                                    static_cast<ModularSymbolEngine*>(m_pSymbolEngine)->Splice(*pProxyEngine->GetInternalEngine());
+                                    delete m_pSymbolEngine;
+                                }
 
-                            m_pSymbolEngine = pProxyEngine;
-                            m_isDebugInfoAvailable = true;
-                        }
-                        else
-                        {
-                            delete pProxyEngine;
+                                m_pSymbolEngine = pProxyEngine;
+                                m_isDebugInfoAvailable = true;
+                            }
+                            else
+                            {
+                                delete pProxyEngine;
+                            }
                         }
                     }
                 }
