@@ -308,6 +308,9 @@ public:
     /// Sets the visibility of time line tooltips
     void ShowTimeLineTooltips(bool shown) { m_showToolTip = shown; }
 
+    /// Set should v scroll to end flag
+    void ShouldScrollToEnd(bool scroll) { m_shouldVScrollToEnd = scroll; }
+
     /// returns pixel coord of a time value
     /// \param time value
     int TimeToPixel(double timeValue, bool checkBounds = true);
@@ -533,6 +536,7 @@ private:
 
     bool             m_bShowZoomHint;               ///< Flag indicating whether or not a tooltip appears to describe zooming ui interaction
     bool             m_showToolTip;                 ///< Flag indicating if tooltips are shown or not
+    bool             m_shouldVScrollToEnd;          ///< Flag indicating if next time scroll update will cause auto scroll to end of V scroll
     acTimelineGrid*  m_pGrid;                       ///< The grid control associated with this timeline.
 
     acTimelineBranch* m_pSelectedBranch;            ///< The currently selected branch.

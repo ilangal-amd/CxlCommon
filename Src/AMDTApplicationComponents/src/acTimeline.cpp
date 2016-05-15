@@ -66,6 +66,7 @@ acTimeline::acTimeline(QWidget* parent, Qt::WindowFlags flags) : QWidget(parent,
     m_bPivotMouseTracking(true),
     m_bShowZoomHint(true),
     m_showToolTip(true),
+    m_shouldVScrollToEnd(false),
     m_pGrid(nullptr),
     m_pSelectedBranch(nullptr),
     m_pSelectedItem(nullptr),
@@ -1082,6 +1083,15 @@ void acTimeline::resizeEvent(QResizeEvent* pEvent)
             // Set the current size as the cache clear size:
             m_lastSizeWhenCacheWasCleared = newSize;
         }
+        
+        // the first time we get a resize event we can set the v scroll bar info if needed
+        if (m_shouldVScrollToEnd && m_pVScrollBar != nullptr)
+        {
+            int maxVScrollVal = m_pVScrollBar->maximum();
+            m_shouldVScrollToEnd = false;
+            m_nVOffset = maxVScrollVal;
+        }
+
     }
 
     updateScrollBars(QFlags<Qt::Orientation>(Qt::Vertical | Qt::Horizontal));
