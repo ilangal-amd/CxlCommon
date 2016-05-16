@@ -213,6 +213,11 @@ protected:
     /// hide tooltip information
     void HideTooltip();
 
+    /// Show the tooltip
+    /// \param tooltipPos tooltip position
+    /// \param shouldEmitSyncSignal should emit the time line signal
+    void ShowTooltip(QObject* object, QEvent* event, double coordTime, QPoint& tooltipPos, bool shouldEmitSyncSignal);
+
     /// toggle the state of a ribbon open->close close->open
     void ToggleRibbonState(int index);
 
@@ -239,6 +244,11 @@ signals:
     /// \param timelineWidth the width of the timeline
     void SetElementsNewWidth(int legendWidth, int timelineWidth);
 
+    /// Signal for the tooltip line used to show sync on other ribbons
+    /// \param visible if the line should be displayed or not
+    /// \param time of the line
+    void ShowTimeLine(bool visible, double timePos);
+
 protected slots:
     /// Handle the changing of the Bound change
     void OnBoundChanged(int& lowBound, int& highBound);
@@ -251,6 +261,12 @@ protected slots:
 
     /// handle movement of the scrollbar
     void OnSliderMoved(int value);
+
+    /// handle a timeline change to show a sync point if needed
+    /// \param visible if the line should be displayed or not
+    /// \param time of the line
+    void OnShowTimeLine(bool visible, double timePos);
+
 private:
     /// Main layout of the ribbons
     QVBoxLayout* m_pMainLayout;

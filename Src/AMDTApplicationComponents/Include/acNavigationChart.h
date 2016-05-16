@@ -398,6 +398,12 @@ public:
     /// sets that the navigation chart does not have zoom control
     void HideZoomControl() { m_zoomCtrlEnabled = false; }
 
+    /// set to use the timeline sync mechanism
+    void UseTimelineSync() { m_shouldUseTimelineSync = true; }
+
+    /// is showing timeline sync
+    bool ShowingTimeline() { return m_showTimelineSync; }
+
 protected:
     /// paint event
     /// \param event
@@ -410,6 +416,10 @@ protected:
     /// draw range bounding line
     /// \param painter
     void DrawRangeBoundingLine(QPainter& painter);
+
+    /// draw time line sync
+    /// \param painter
+    void DrawTimelineSync(QPainter& painter);
 
     /// mouse move event
     /// \param mouse event
@@ -524,11 +534,21 @@ signals:
     /// signal that the mouse is leaving the chart (needed by gpFilterButton)
     void ChartLeave();
 
+    /// Signal for the tooltip line used to show sync on other ribbons
+    /// \param visible if the line should be displayed or not
+    /// \param time of the line
+    void ShowTimeLine(bool, double);
+
 protected slots:
 
     /// handle the end of range change
     /// \param point
     void OnRangeChangeEnded(const QPointF&);
+
+    /// handle a timeline change to show a sync point if needed
+    /// \param visible if the line should be displayed or not
+    /// \param time of the line
+    void OnShowTimeLine(bool visible, double timePos);
 
 private:
 
@@ -634,6 +654,15 @@ private:
 
     /// Flag to show if the control uses the zoom control
     bool m_zoomCtrlEnabled;
+
+    /// should use timeline sync mechanism at all
+    bool m_shouldUseTimelineSync;
+        
+        /// should the time line sync indication be shown
+    bool m_showTimelineSync;
+
+    /// time line indication for sync
+    double m_timelineSyncPos;
 };
 
 

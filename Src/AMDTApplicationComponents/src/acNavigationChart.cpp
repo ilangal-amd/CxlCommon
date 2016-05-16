@@ -92,9 +92,9 @@ acNavigationChartLayerNonIndex::~acNavigationChartLayerNonIndex()
 }
 
 acNavigationChart::acNavigationChart(QWidget* pParent,
-                                     const QString& dataLabel,
-                                     const acNavigationChartInitialData* initialData,
-                                     acNavigationChartColorsData* colorsData) :
+    const QString& dataLabel,
+    const acNavigationChartInitialData* initialData,
+    acNavigationChartColorsData* colorsData) :
     QCustomPlot(pParent),
     m_pCurrentLeftRangeHandlePixmap(nullptr),
     m_pCurrentRightRangeHandlePixmap(nullptr),
@@ -134,7 +134,10 @@ acNavigationChart::acNavigationChart(QWidget* pParent,
     m_unitsX(eNavigationMilliseconds),
     m_unitsY(eNavigationMilliseconds),
     m_unitDisplay(eNavigationDisplayAll),
-    m_zoomCtrlEnabled(true)
+    m_zoomCtrlEnabled(true),
+    m_shouldUseTimelineSync(false),
+    m_showTimelineSync(false),
+    m_timelineSyncPos(0)
 {
     // if initial data is null - create a default data
     if (initialData == nullptr)
@@ -221,10 +224,10 @@ void acNavigationChart::paintEvent(QPaintEvent* event)
 {
     QCustomPlot::paintEvent(event);
 
+    QPainter painter(this);
+
     if (m_zoomCtrlEnabled)
     {
-        QPainter painter(this);
-
         bool shouldDrawBoundingLine = ShouldDrawBoundingLine();
 
         if (shouldDrawBoundingLine)
@@ -232,6 +235,11 @@ void acNavigationChart::paintEvent(QPaintEvent* event)
             DrawRangeBoundingLine(painter);
             DrawRangeControl(painter);
         }
+    }
+
+    if (m_showTimelineSync)
+    {
+        DrawTimelineSync(painter);
     }
 }
 
@@ -285,12 +293,12 @@ void acNavigationChart::GetBounds(int& lower, int& upper)
 
 void acNavigationChart::mouseMoveEvent(QMouseEvent* event)
 {
+    QPoint mousePos = event->pos();
+
     if (m_zoomCtrlEnabled)
     {
         if (!m_vXData.isEmpty())
         {
-            QPoint mousePos = event->pos();
-
             // check if mouse cursor is over range control handle:
             if (IsOverLeftHandle(mousePos))
             {
@@ -423,6 +431,29 @@ void acNavigationChart::mouseMoveEvent(QMouseEvent* event)
                         }
                     }
                 }
+            }
+        }
+    }
+
+    if (m_shouldUseTimelineSync)
+    {
+        double realPos = m_pAllSessionXAxis->pixelToCoord(mousePos.x());
+        // check if the mouse is between the two range control. if it is show the timeline sync and emit a signal
+        if (realPos >= m_xAxisSelectedValueLow && realPos <= m_xAxisSelectedValueHigh)
+        {
+            m_timelineSyncPos = realPos;
+            m_showTimelineSync = true;
+            emit ShowTimeLine(m_showTimelineSync, m_timelineSyncPos);
+            repaint();
+        }
+        else
+        {
+            bool shouldReapint = m_showTimelineSync;
+            m_showTimelineSync = false;
+            if (shouldReapint)
+            {
+                emit ShowTimeLine(m_showTimelineSync, m_timelineSyncPos);
+                repaint();
             }
         }
     }
@@ -2011,4 +2042,95 @@ acNavigationChartLayer* acNavigationChart::GetLayerById(int layerID)
     }
 
     return pRetVal;
+}
+
+void acNavigationChart::OnShowTimeLine(bool visible, double timePos)
+{
+    m_showTimelineSync = visible;
+    m_timelineSyncPos = timePos;
+
+    repaint();
+}
+
+void acNavigationChart::DrawTimelineSync(QPainter& painter)
+{
+    GT_UNREFERENCED_PARAMETER(painter);
+    if (m_showTimelineSync)
+    {
+        // pass through all the data lines and find the highest y value between all of them to show the sync point
+        double highValue = 0;
+        int numLayers = m_layersVector.size();
+        for (int nLayer = 0; nLayer < numLayers; nLayer++)
+        {
+            // delete old layer plotable
+            acNavigationChartLayer* pCurrentLayer = m_layersVector[nLayer];
+
+            if (pCurrentLayer != nullptr && pCurrentLayer->m_visible)
+            {
+                double layerNearestValue = 0;
+                // check if it is a normal layer or none indexed layer
+                acNavigationChartLayerNonIndex* pNonIndexLayer = dynamic_cast<acNavigationChartLayerNonIndex*>(pCurrentLayer);
+                if (pNonIndexLayer != nullptr)
+                {
+                    int numPoints = pNonIndexLayer->m_layerXData.count();
+                    for (int nPoint = 0; nPoint < numPoints; nPoint++)
+                    {
+                        if (pNonIndexLayer->m_layerXData[nPoint] > m_timelineSyncPos - m_pAllSessionGraph->KeyInterval() / 2 &&
+                            pNonIndexLayer->m_layerXData[nPoint] <= m_timelineSyncPos + m_pAllSessionGraph->KeyInterval() / 2)
+                        {
+                            layerNearestValue = pNonIndexLayer->m_layerYData[nPoint];
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    int syncPos;
+                    bool rc = m_pAllSessionGraph->GetNearestIndexToKey(m_timelineSyncPos, -1, syncPos);
+                    if (rc)
+                    {
+                        layerNearestValue = pCurrentLayer->m_layerYData[syncPos];
+                    }
+                }
+
+                if (layerNearestValue > highValue)
+                {
+                    highValue = layerNearestValue;
+                }
+            }
+        }
+
+        // Draw the point
+        // convert the x,y positions to the pixels position
+        QPoint centerPoint = QPoint(m_pAllSessionXAxis->coordToPixel(m_timelineSyncPos), yAxis->coordToPixel(highValue));
+/*        QPen timelinePen(Qt::red);
+        timelinePen.setWidth(3);
+        painter.setPen(timelinePen);
+        painter.drawEllipse(centerPoint, 2, 2);*/
+        // draw the vertical line
+        QPen timelinePen(QColor(185, 185, 185, 255), 2, Qt::SolidLine);
+        painter.setPen(timelinePen);
+        QPoint bottomPoint(m_pAllSessionXAxis->coordToPixel(m_timelineSyncPos), yAxis->coordToPixel(0));
+        QPoint topPoint(m_pAllSessionXAxis->coordToPixel(m_timelineSyncPos), yAxis->coordToPixel(yAxis->range().upper));
+        QLine centerLine(bottomPoint, topPoint);
+        painter.drawLine(centerLine);
+        // draw the triangle
+        QPoint triLine[4];
+        triLine[0] = QPoint(centerPoint.x(), centerPoint.y() - 3);// at the active range line left
+        triLine[1] = QPoint(centerPoint.x()- 5, centerPoint.y() - 6); // at the active range line left just below XAxis
+        triLine[2] = QPoint(centerPoint.x() + 4, centerPoint.y() - 6);// at the m_nLow just below X-axis
+        triLine[3] = QPoint(centerPoint.x(), centerPoint.y() - 3); // at the m_nLow and x-Axis rect top
+        QPoint frameLine[4];
+        frameLine[0] = QPoint(centerPoint.x(), centerPoint.y() -1 );// at the active range line left
+        frameLine[1] = QPoint(centerPoint.x() - 7, centerPoint.y() - 8); // at the active range line left just below XAxis
+        frameLine[2] = QPoint(centerPoint.x() + 6, centerPoint.y() - 8);// at the m_nLow just below X-axis
+        frameLine[3] = QPoint(centerPoint.x(), centerPoint.y() -1 ); // at the m_nLow and x-Axis rect top
+        QPen trainglePen(acQYELLOW_WARNING_COLOUR, 2, Qt::SolidLine);
+        painter.setPen(trainglePen);
+        painter.drawPolyline(triLine, 4);
+        QPen trainglePenFrame(acQRED_WARNING_COLOUR, 1, Qt::SolidLine);
+        painter.setPen(trainglePenFrame);
+        painter.drawPolyline(frameLine, 4);
+
+    }
 }

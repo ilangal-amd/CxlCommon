@@ -102,6 +102,9 @@ public:
     /// inherits documentation from base class
     virtual double selectTest(const QPointF& pos, bool onlySelectable, QVariant* details = 0) const;
 
+    // Get the key interval
+    double KeyInterval() { return m_keyInterval; }
+
 protected:
     // set the key interval based on the data
     void CalcKeyInterval();

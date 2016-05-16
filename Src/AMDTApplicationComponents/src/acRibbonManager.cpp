@@ -1196,7 +1196,6 @@ void acRibbonManager::MouseMoveEvent(QObject* object, QEvent* event)
     // convert the position of the event to the x of the m_pBoundsController if there is any. from that convert to the time in the m_pBoundsController
     if (m_pBoundsController != nullptr && m_pBoundFrameRibbonBottom != nullptr && event != nullptr)
     {
-        // check if it is in one of the bounds ribbons
         int controllerIndex = IndexOfRibbon(m_pControllerRibbon);
         int bottomIndex = IndexOfRibbon(m_pBoundFrameRibbonBottom);
 
@@ -1204,7 +1203,6 @@ void acRibbonManager::MouseMoveEvent(QObject* object, QEvent* event)
         QPoint globalPos = pMouseEvent->globalPos();
 
         int foundRibbon = IsRibbonUnderPosition(globalPos);
-
         if (foundRibbon != -1)
         {
 
@@ -1215,108 +1213,19 @@ void acRibbonManager::MouseMoveEvent(QObject* object, QEvent* event)
                 QPoint boundLocal = m_pBoundsController->mapFromGlobal(pMouseEvent->globalPos());
                 QCPAxis* pAxis = m_pBoundsController->GetActiveRangeXAxis();
 
-                if (boundLocal.x() >= pAxis->axisRect()->left() && boundLocal.x() <= pAxis->axisRect()->right())
+                if (pAxis != nullptr && boundLocal.x() >= pAxis->axisRect()->left() && boundLocal.x() <= pAxis->axisRect()->right())
                 {
                     // convert the mouse x pos to the client coord
                     QPoint localPos = mapFromGlobal(pMouseEvent->globalPos());
+                    double coordTime = pAxis->pixelToCoord(boundLocal.x());
 
-                    int yPos = GetControllerAxisBottomCoordinate();
-                    QPoint leftTop(localPos.x(), yPos);
-                    QPoint rightBottom(localPos.x() + 1, GetRibbonBottomCoordinate(m_pBoundFrameRibbonBottom) - 1);
-
-                    m_pTooltipLine->setGeometry(QRect(leftTop, rightBottom));
-                    m_pTooltipLine->setVisible(true);
-
-                    double coordTime = m_pBoundsController->GetActiveRangeXAxis()->pixelToCoord(boundLocal.x());
-
-                    // set the labels text and position
-                    for (int nRibbon = controllerIndex; nRibbon <= bottomIndex; nRibbon++)
-                    {
-                        QLabel* pCurrentLabel = nullptr;
-                        GT_IF_WITH_ASSERT(nRibbon - controllerIndex >= 0 && nRibbon - controllerIndex < m_tooltipLabels.size())
-                        {
-                            pCurrentLabel = m_tooltipLabels[nRibbon - controllerIndex];
-                        }
-                        GT_IF_WITH_ASSERT(pCurrentLabel != nullptr)
-                        {
-                            // special case for the label of the controller text and y position
-                            if (nRibbon == controllerIndex)
-                            {
-                                pCurrentLabel->setText(m_pBoundsController->TimeToString(m_pBoundsController->GetNavigationUnitsX(), coordTime, true));
-                            }
-                            else
-                            {
-                                GT_IF_WITH_ASSERT(m_ribbonDataVector[nRibbon].m_pRibbon != nullptr)
-                                {
-                                    acIRibbonTime* pTooltipInterface = dynamic_cast<acIRibbonTime*>(m_ribbonDataVector[nRibbon].m_pRibbon);
-
-                                    if (pTooltipInterface != nullptr)
-                                    {
-                                        // check if the ribbon has the object that got the message as a child
-                                        bool hasObject = false;
-                                        QList<QObject*> childObjects = m_ribbonDataVector[nRibbon].m_pRibbon->findChildren<QObject*>();
-                                        // add the ribbon itself as an item to check
-                                        childObjects.push_back(m_ribbonDataVector[nRibbon].m_pRibbon);
-                                        int numObjects = childObjects.size();
-
-                                        for (int nObject = 0; nObject < numObjects; nObject++)
-                                        {
-                                            if (childObjects[nObject] == object)
-                                            {
-                                                hasObject = true;
-                                                break;
-                                            }
-                                        }
-
-                                        QString tooltip;
-
-                                        if (hasObject)
-                                        {
-                                            tooltip = pTooltipInterface->GetTooltip(coordTime, pMouseEvent);
-                                        }
-                                        else
-                                        {
-                                            tooltip = pTooltipInterface->GetTooltip(coordTime, nullptr);
-                                        }
-
-                                        pCurrentLabel->setText(tooltip);
-                                    }
-                                }
-                            }
-
-                            pCurrentLabel->adjustSize();
-                            int labelWidth = pCurrentLabel->width();
-                            int labelHeight = pCurrentLabel->height();
-                            int labelYPos = yPos;
-
-                            if (nRibbon > controllerIndex)
-                            {
-                                GT_IF_WITH_ASSERT(m_ribbonDataVector[nRibbon].m_pWrapper != nullptr)
-                                {
-                                    labelYPos = m_ribbonDataVector[nRibbon].m_pWrapper->geometry().top() + CLOSED_HEIGHT;
-                                }
-                            }
-
-                            // Calculate the label x coordinate. If the label has enough space to be painted with the line coord as
-                            // left coordinate, draw it there. If not, calculate the left most coordinate that leaves enough space for
-                            // the label
-                            int rightMostPos = m_pBoundingBoxBottomLine->geometry().right();
-                            int leftPos = localPos.x();
-
-                            if ((leftPos + labelWidth) > rightMostPos)
-                            {
-                                leftPos = leftPos - labelWidth;
-                            }
-
-                            pCurrentLabel->setGeometry(leftPos, labelYPos, labelWidth, labelHeight);
-
-                            pCurrentLabel->setVisible(m_ribbonDataVector[nRibbon].m_isVisible && !pCurrentLabel->text().isEmpty());
-                        }
-                    }
+                    ShowTooltip(object, event, coordTime, localPos, true);
                 }
                 else
                 {
                     m_pTooltipLine->setVisible(false);
+
+                    emit ShowTimeLine(false, 0);
 
                     // hide the labels
                     for (int nRibbon = controllerIndex; nRibbon < bottomIndex; nRibbon++)
@@ -1336,6 +1245,110 @@ void acRibbonManager::MouseMoveEvent(QObject* object, QEvent* event)
     }
 }
 
+void acRibbonManager::ShowTooltip(QObject* object, QEvent* event, double coordTime, QPoint& tooltipPos, bool shouldEmitSyncSignal)
+{
+    int controllerIndex = IndexOfRibbon(m_pControllerRibbon);
+    int bottomIndex = IndexOfRibbon(m_pBoundFrameRibbonBottom);
+
+    QMouseEvent* pMouseEvent = dynamic_cast<QMouseEvent*>(event);
+
+    int yPos = GetControllerAxisBottomCoordinate();
+    QPoint leftTop(tooltipPos.x(), yPos);
+    QPoint rightBottom(tooltipPos.x() + 1, GetRibbonBottomCoordinate(m_pBoundFrameRibbonBottom) - 1);
+
+    m_pTooltipLine->setGeometry(QRect(leftTop, rightBottom));
+    m_pTooltipLine->setVisible(true);
+
+    if (shouldEmitSyncSignal)
+    {
+        emit ShowTimeLine(true, coordTime);
+    }
+    // set the labels text and position
+    for (int nRibbon = controllerIndex; nRibbon <= bottomIndex; nRibbon++)
+    {
+        QLabel* pCurrentLabel = nullptr;
+        GT_IF_WITH_ASSERT(nRibbon - controllerIndex >= 0 && nRibbon - controllerIndex < m_tooltipLabels.size())
+        {
+            pCurrentLabel = m_tooltipLabels[nRibbon - controllerIndex];
+        }
+        GT_IF_WITH_ASSERT(pCurrentLabel != nullptr)
+        {
+            // special case for the label of the controller text and y position
+            if (nRibbon == controllerIndex)
+            {
+                pCurrentLabel->setText(m_pBoundsController->TimeToString(m_pBoundsController->GetNavigationUnitsX(), coordTime, true));
+            }
+            else
+            {
+                GT_IF_WITH_ASSERT(m_ribbonDataVector[nRibbon].m_pRibbon != nullptr)
+                {
+                    acIRibbonTime* pTooltipInterface = dynamic_cast<acIRibbonTime*>(m_ribbonDataVector[nRibbon].m_pRibbon);
+
+                    if (pTooltipInterface != nullptr)
+                    {
+                        // check if the ribbon has the object that got the message as a child
+                        bool hasObject = false;
+                        QList<QObject*> childObjects = m_ribbonDataVector[nRibbon].m_pRibbon->findChildren<QObject*>();
+                        // add the ribbon itself as an item to check
+                        childObjects.push_back(m_ribbonDataVector[nRibbon].m_pRibbon);
+                        int numObjects = childObjects.size();
+
+                        for (int nObject = 0; nObject < numObjects; nObject++)
+                        {
+                            if (childObjects[nObject] == object)
+                            {
+                                hasObject = true;
+                                break;
+                            }
+                        }
+
+                        QString tooltip;
+
+                        if (hasObject)
+                        {
+                            tooltip = pTooltipInterface->GetTooltip(coordTime, pMouseEvent);
+                        }
+                        else
+                        {
+                            tooltip = pTooltipInterface->GetTooltip(coordTime, nullptr);
+                        }
+
+                        pCurrentLabel->setText(tooltip);
+                    }
+                }
+            }
+
+            pCurrentLabel->adjustSize();
+            int labelWidth = pCurrentLabel->width();
+            int labelHeight = pCurrentLabel->height();
+            int labelYPos = yPos;
+
+            if (nRibbon > controllerIndex)
+            {
+                GT_IF_WITH_ASSERT(m_ribbonDataVector[nRibbon].m_pWrapper != nullptr)
+                {
+                    labelYPos = m_ribbonDataVector[nRibbon].m_pWrapper->geometry().top() + CLOSED_HEIGHT;
+                }
+            }
+
+            // Calculate the label x coordinate. If the label has enough space to be painted with the line coord as
+            // left coordinate, draw it there. If not, calculate the left most coordinate that leaves enough space for
+            // the label
+            int rightMostPos = m_pBoundingBoxBottomLine->geometry().right();
+            int leftPos = tooltipPos.x();
+
+            if ((leftPos + labelWidth) > rightMostPos)
+            {
+                leftPos = leftPos - labelWidth;
+            }
+
+            pCurrentLabel->setGeometry(leftPos, labelYPos, labelWidth, labelHeight);
+
+            pCurrentLabel->setVisible(m_ribbonDataVector[nRibbon].m_isVisible && !pCurrentLabel->text().isEmpty());
+        }
+    }
+}
+
 void acRibbonManager::MouseLeaveEvent(QObject* object, QEvent* event)
 {
     GT_UNREFERENCED_PARAMETER(object);
@@ -1343,16 +1356,11 @@ void acRibbonManager::MouseLeaveEvent(QObject* object, QEvent* event)
 
     bool hideTooltip = true;
 
-    // in VS we really need to verify if this was a leave event since VS might send a leave event when the VS appears to get control but the mouse is in the
-    // same place and we do not want to hide the tooltip at this moment
-    if (GetExecutedApplicationType() == OS_VISUAL_STUDIO_PLUGIN_TYPE)
-    {
-        QPoint globalPos = QCursor::pos();
+    QPoint globalPos = QCursor::pos();
 
-        if (IsRibbonUnderPosition(globalPos) != -1)
-        {
-            hideTooltip = false;
-        }
+    if (IsRibbonUnderPosition(globalPos) != -1)
+    {
+        hideTooltip = false;
     }
 
     if (hideTooltip)
@@ -1450,6 +1458,8 @@ int acRibbonManager::GetControllerAxisBottomCoordinate()
 
 void acRibbonManager::HideTooltip()
 {
+    emit ShowTimeLine(false, 0);
+
     GT_IF_WITH_ASSERT(m_pTooltipLine != nullptr)
     {
         m_pTooltipLine->setVisible(false);
@@ -1576,5 +1586,29 @@ void acRibbonManager::PassMouseClickBelowToolTip(QEvent* pEvent)
                 }
             }
         }
+    }
+}
+
+void acRibbonManager::OnShowTimeLine(bool visible, double timePos)
+{
+    if (m_pBoundsController != nullptr)
+    {
+        // tooltip pos in the bounds controller coords, need to convert to global and then to local coord
+        QPoint tooltipPos = QPoint(m_pBoundsController->GetActiveRangeXAxis()->coordToPixel(timePos), 0);
+        QPoint globalPos = m_pBoundsController->mapToGlobal(tooltipPos);
+        QPoint localPos = mapFromGlobal(globalPos);
+
+        if (visible)
+        {
+            ShowTooltip(nullptr, nullptr, timePos, localPos, false);
+        }
+        else
+        {
+            HideTooltip();
+        }
+    }
+    else
+    {
+        HideTooltip();
     }
 }
