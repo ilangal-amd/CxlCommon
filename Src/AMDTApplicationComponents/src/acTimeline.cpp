@@ -1085,11 +1085,13 @@ void acTimeline::resizeEvent(QResizeEvent* pEvent)
         }
         
         // the first time we get a resize event we can set the v scroll bar info if needed
-        if (m_shouldVScrollToEnd && m_pVScrollBar != nullptr)
+        if (m_shouldVScrollToEnd)
         {
-            int maxVScrollVal = m_pVScrollBar->maximum();
+            if (m_pVScrollBar != nullptr && m_pVScrollBar->isVisible())
+            {
+                m_nVOffset = m_pVScrollBar->maximum();
+            }
             m_shouldVScrollToEnd = false;
-            m_nVOffset = maxVScrollVal;
         }
 
     }
