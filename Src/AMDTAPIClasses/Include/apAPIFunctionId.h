@@ -31,6 +31,8 @@ enum apAPIFunctionId
     GA_FID_gaTerminateDebuggedProcess,
     GA_FID_gaSuspendDebuggedProcess,
     GA_FID_gaResumeDebuggedProcess,
+    GA_FID_gaLockDriverThreads,
+    GA_FID_gaUnlockDriverThreads,
     GA_FID_gaMakeThreadGetCallStack,
     GA_FID_gaSuspendThreads,
     GA_FID_gaResumeThreads,
