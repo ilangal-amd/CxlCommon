@@ -94,7 +94,7 @@ bool apCLContextProperties::writeSelfIntoChannel(osChannel& ipcChannel) const
     ipcChannel << (gtUInt64)propListSize;
 
     // Write each of the properties:
-    for (int i = 0; i < (int) _properties.size(); i++)
+    for (gtSize_t i = 0; i < propListSize; i++)
     {
         // Get the current property:
         apCLProperty property = _properties[i];
@@ -127,10 +127,12 @@ bool apCLContextProperties::readSelfFromChannel(osChannel& ipcChannel)
     for (gtUInt64 i = 0; i < propListSize; i++)
     {
         gtUInt32 currPropertyNameAsUInt32 = 0;
-        gtUInt64 currPropertyValueAsUInt64 = 0;
         ipcChannel >> currPropertyNameAsUInt32;
+        gtUInt64 currPropertyValueAsUInt64 = 0;
         ipcChannel >> currPropertyValueAsUInt64;
-        _properties.push_back(apCLProperty(currPropertyNameAsUInt32, currPropertyValueAsUInt64));
+
+        apCLProperty currentProperty((cl_uint)currPropertyNameAsUInt32, (oaCLContextProperty)currPropertyValueAsUInt64);
+        _properties.push_back(currentProperty);
     }
 
     // Read base class data:
