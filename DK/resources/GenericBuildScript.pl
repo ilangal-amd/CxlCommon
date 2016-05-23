@@ -11,6 +11,7 @@
 # $Author: plohrman $
 #
 # (c) 2006 ATI Research, Inc., All rights reserved
+# Copyright (c) 2006-2016 , Advanced Micro Devices, Inc.  All rights reserved.
 
 #--- External Packages ---
 
