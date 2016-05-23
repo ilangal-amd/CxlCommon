@@ -142,26 +142,31 @@ bool osIsLinuxSystemModule(const gtString& absolutePath)
 {
     bool ret = false;
 
-    int len = absolutePath.length();
-
-    if (len > 3 && 0 == memcmp(absolutePath.asCharArray() + len - 3, L".so", 3 * sizeof(wchar_t)))
+    // Kernel samples
+    if (absolutePath.find(L"[kernel.kallsyms]") != -1)
     {
-        // Kernel samples
-        ret = (absolutePath.find(L"[kernel.kallsyms]") != -1);
-
-        if (!ret && L'/' == absolutePath[0])
+        ret = true;
+    }
+    else
+    {
+        // has ".so" within it
+        if ((absolutePath.find(L".so") != -1))
         {
-            if (absolutePath.compare(1, 3, L"lib") == 0)
+            // starts with '/'
+            if (L'/' == absolutePath[0])
             {
-                ret = true;
-            }
-            else
-            {
-                if (absolutePath.compare(1, 4, L"usr/") == 0)
+                // starts with '/lib'
+                if (absolutePath.compare(1, 3, L"lib") == 0)
                 {
+                    ret = true;
+                }
+                // starts with '/usr/'
+                else if (absolutePath.compare(1, 4, L"usr/") == 0)
+                {
+                    // starts with '/usr/lib' or '/usr/local/lib' or '/usr/share/gdb'
                     if (absolutePath.compare(5, 3, L"lib") ||
                         absolutePath.compare(5, 9, L"local/lib") ||
-                        absolutePath.compare(5, 10, L"share/gdb") == 0)
+                        absolutePath.compare(5, 9, L"share/gdb") == 0)
                     {
                         ret = true;
                     }
@@ -198,4 +203,3 @@ OS_API bool osIsLocalPortAvaiable(const unsigned short port)
     bool result = tcpServer.open() && tcpServer.bind(portAddress);
     return result;
 }
-
