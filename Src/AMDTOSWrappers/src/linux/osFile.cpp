@@ -171,3 +171,9 @@ bool osFile::deleteFile()
 
     return retVal;
 }
+
+
+bool osFile::IsExecutable() const
+{
+    access(_filePath.asString().asASCIICharArray(), X_OK)
+}
